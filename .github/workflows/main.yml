@@ -1,0 +1,34 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@master
+
+      - name: Node
+        uses: actions/setup-node@v1
+        id: nodenv
+        with:
+          node-version: '15.8.0'
+      - run: yarn
+
+      - name: Copy file via scp
+        uses: appleboy/scp-action@master
+        env:
+          HOST: ${{ secrets.HOST }}
+          USERNAME: ${{ secrets.USERNAME }}
+          PORT: ${{ secrets.PORT }}
+          KEY: ${{ secrets.SSHKEY }}
+          PASSPHRASE: ${{ secrets.PASSPHRASE }}
+        with:
+          source: "."
+          target: "/home/javier/icloud"
