@@ -1,23 +1,21 @@
-import { getImages } from 'icloud-shared-album'
 import * as dotenv from 'dotenv' 
 import * as fs from 'fs'
 
 import AWS from 'aws-sdk'
-
-import Stream from 'stream'
 import Path from 'path'
 import Request from 'request'
+import Stream from 'stream'
+import { getImages } from 'icloud-shared-album'
 
 dotenv.config()
 
 const FILENAME = 'photos.json'
-const MAX_WIDTH = 6000
+
+const FOLDER = process.env.FOLDER
 
 const S3_ID = process.env.S3_ID
 const S3_SECRET = process.env.S3_SECRET
 const BUCKET_NAME = process.env.S3_BUCKET_NAME
-const RESOLUTIONS = [128, 640, 1280, 2880]
-const EXTENSIONS = ['jpg', 'webp']
 
 class Cloud {
   constructor (albumID) {
@@ -62,7 +60,7 @@ class Cloud {
 
       const info = {
         Bucket: BUCKET_NAME,
-        Key: `stream/${filename}`,
+        Key: `${FOLDER}/${filename}`,
         ContentType:`image/${ext}`,
         Body
       }
