@@ -49,23 +49,24 @@ class Cloud {
     })
   }
 
+  getS3BucketInfo (URL) {
+    const filename = Path.basename(URL).split('?')[0]
+    const ext = Path.extname(filename).substring(1)
+    const Body = new Stream.PassThrough()
+
+    Request(URL).pipe(Body)
+
+    return {
+      Bucket: BUCKET_NAME,
+      Key: `${FOLDER}/${filename}`,
+      ContentType:`image/${ext}`,
+      Body
+    }
+  }
+
   uploadImage (photoID, URL) {
     return new Promise((resolve, reject) => {
-      const Body = new Stream.PassThrough()
-
-      Request(URL).pipe(Body)
-      
-      const filename = Path.basename(URL).split('?')[0]
-      const ext = Path.extname(filename).substring(1)
-
-      const info = {
-        Bucket: BUCKET_NAME,
-        Key: `${FOLDER}/${filename}`,
-        ContentType:`image/${ext}`,
-        Body
-      }
-
-      this.S3.upload(info, (error, data) => {
+      this.S3.upload(this.getS3BucketInfo(URL), (error, data) => {
         if (error) {
           return reject(error)
         }
