@@ -100,8 +100,11 @@ class Cloud {
       })
 
       if (selectedVersion) {
-        if (!this.uploadedItems.includes(photo.photoGuid)) {
-          promises.push(this.uploadImage(photo.photoGuid, selectedVersion.url))
+        const URL = selectedVersion.url
+        const filename = this.extractFilenameFromURL(URL)
+
+        if (!this.uploadedItems.includes(filename)) {
+          promises.push(this.uploadImage(photo.photoGuid, URL))
         } 
       }
     })
