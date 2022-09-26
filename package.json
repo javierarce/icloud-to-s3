@@ -8,6 +8,7 @@
     "aws-sdk": "^2.1223.0",
     "dotenv": "^16.0.2",
     "fs": "^0.0.1-security",
-    "icloud-shared-album": "^1.1.0"
+    "icloud-shared-album": "^1.1.0",
+    "request": "^2.88.2"
   }
 }
