@@ -31,4 +31,4 @@ jobs:
           PASSPHRASE: ${{ secrets.PASSPHRASE }}
         with:
           source: "."
-          target: "/home/javier/icloud"
+          target: ${{ secrets.TARGET }}
