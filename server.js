@@ -38,8 +38,8 @@ class Cloud {
     getImages(this.albumID).then(this.onGetData.bind(this))
   }
 
-  writeUploadedIds (ids) {
-    this.uploadedItems = this.uploadedItems.concat(ids)
+  writeUploadedFilenames (filenames) {
+    this.uploadedItems = this.uploadedItems.concat(filenames)
 
     fs.writeFile(FILENAME, JSON.stringify(this.uploadedItems), (error, data) => {
       if (error) {
@@ -49,8 +49,11 @@ class Cloud {
     })
   }
 
-  getS3BucketInfo (URL) {
-    const filename = Path.basename(URL).split('?')[0]
+  extractFilenameFromURL (URL) {
+    return Path.basename(URL).split('?')[0]
+  }
+
+  getS3BucketInfo (filename, URL) {
     const ext = Path.extname(filename).substring(1)
     const Body = new Stream.PassThrough()
 
@@ -66,11 +69,14 @@ class Cloud {
 
   uploadImage (photoID, URL) {
     return new Promise((resolve, reject) => {
-      this.S3.upload(this.getS3BucketInfo(URL), (error, data) => {
+
+      const filename = this.extractFilenameFromURL(URL)
+
+      this.S3.upload(this.getS3BucketInfo(filename, URL), (error, data) => {
         if (error) {
           return reject(error)
         }
-        resolve(photoID)
+        resolve(filename)
       })
     })
   }
@@ -100,8 +106,8 @@ class Cloud {
       }
     })
 
-    Promise.all(promises).then((ids) => {
-      this.writeUploadedIds(ids)
+    Promise.all(promises).then((filenames) => {
+      this.writeUploadedFilenames(filenames)
     })
   }
 }
